@@ -1,7 +1,10 @@
 <template>
     <div class="app">
             <h1>Страница с постами</h1>
-
+            <my-input
+                v-model="searchQuery"
+                placeholder="Поиск..."
+            />
             <div class="app_btns">
                 <my-button 
                     @click="showDialog"
@@ -20,11 +23,24 @@
             </my-dialog>
     
             <PostList 
-                :posts = "sortedPost"
+                :posts = "sortedAndSearchedPosts"
                 @remove = "removePost"
                 v-if="!isPostsLoading"
             />
             <my-loader v-else></my-loader>
+            <div class="page__wrapper">
+                <div 
+                    v-for="pageN in totalPages" 
+                    :key="pageN"
+                    class="page"
+                    :class="{
+                        'current-page': page === pageN
+                    }"
+                    @click="changePage(pageN)"
+                >
+                    {{ pageN }}
+                </div>
+            </div>
     </div>
 </template>
 
@@ -43,6 +59,10 @@ export default {
             dialogVisible: false,
             isPostsLoading: false,
             selectedSort: "",
+            searchQuery: "",
+            page: 1,
+            limit: 10,
+            totalPages: 0,
             sortOptions: [
                 {value: 'title', name: 'По названию постов'},
                 {value: 'body', name: 'По содержанию постов'},
@@ -63,11 +83,20 @@ export default {
         showDialog() {
             this.dialogVisible = true 
         },
+        changePage(pageN) {
+            this.page = pageN
+        },
 
         async fetchPosts() {
             try {
                 this.isPostsLoading = true 
-                const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10')
+                const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+                    params: {
+                        _page: this.page,
+                        _limit: this.limit
+                    }
+                })
+                this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
                 this.posts = response.data
             } catch(e) {
                 alert(e)
@@ -78,7 +107,6 @@ export default {
     },
     mounted() {
         this.fetchPosts() 
-        
     },
     computed: {
         sortedPost() {
@@ -90,6 +118,14 @@ export default {
                     return 0;
                 }) : [...this.posts].sort((arg1, arg2) => { return arg1[this.selectedSort]?.localeCompare(arg2[this.selectedSort])})
 
+        },
+        sortedAndSearchedPosts() {
+            return this.sortedPost.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()))
+        }
+    },
+    watch: {
+        page() {
+            this.fetchPosts()
         }
     }
 }
@@ -111,4 +147,19 @@ export default {
     justify-content: space-between;
     margin: 15px 0; 
 }
+
+.page__wrapper {
+    display: flex;
+    margin-top: 15px;
+}
+
+.page {
+    border: 1px solid black;
+    padding: 10px;
+}
+
+.current-page {
+    border: 2px solid goldenrod
+}
+
 </style>
