@@ -4,7 +4,7 @@
         <transition-group name="post-list">
             <PostItem class="post" 
                 v-for="post in posts" 
-                :key = 'post.id' 
+                :key = 'post.id'  
                 :post="post" 
                 @remove="$emit('remove', post)"
             />
@@ -31,19 +31,14 @@ export default {
 </script>
 
 <style scoped>
-.post {
-    padding: 15px;
-    border: 2px solid goldenrod;
-    margin-top: 15px;
-}
 .post-list-item {
     display: inline-block;
     margin-right: 10px;
   }
-.post-list-enter-active, .list-leave-active {
+.post-list-enter-active, .post-list-leave-active {
     transition: all 1s;
 }
-.post-list-enter, .post-list-leave-to /* .list-leave-active до версии 2.1.8 */ {
+.post-list-enter-from, .post-list-leave-to {
     opacity: 0;
     transform: translateY(30px);
 }

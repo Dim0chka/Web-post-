@@ -82,10 +82,10 @@ export default {
     },
     computed: {
         sortedPost() {
-            return (this.selectedSort === "-post.id") ? [...this.posts].sort(function compare(a, b) {
-                    if (a.id < b.id)
+            return (this.selectedSort === "-post.id") ? [...this.posts].sort(function compare(arg1, arg2) {
+                    if (arg1.id < arg2.id)
                         return 1;
-                    if (a.id > b.id)
+                    if (arg1.id > arg2.id)
                         return -1;
                     return 0;
                 }) : [...this.posts].sort((arg1, arg2) => { return arg1[this.selectedSort]?.localeCompare(arg2[this.selectedSort])})
