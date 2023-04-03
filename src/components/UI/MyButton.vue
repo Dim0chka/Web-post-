@@ -1,5 +1,5 @@
 <template>
-    <button class="btn">
+    <button class="focus:outline-none text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-900">
         <slot></slot>
         <!-- slot - для того, чтобы в других файлах можно было писать свой value для этой кнопки  -->
     </button>
@@ -12,11 +12,5 @@ export default {
 </script>
 
 <style scoped>
-.btn {
-    padding: 20px;
-    background: none;
-    color: goldenrod;
-    border: 2px solid goldenrod;
-    align-self: flex-end;
-}
+
 </style>

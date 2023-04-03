@@ -1,8 +1,7 @@
 <template>
     <div v-if="posts.length > 0">
-        <h3>Список постов</h3>
         <transition-group name="post-list">
-            <PostItem class="post" 
+            <PostItem 
                 v-for="post in posts" 
                 :key = 'post.id'  
                 :post="post" 
