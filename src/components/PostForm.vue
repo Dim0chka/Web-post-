@@ -20,15 +20,25 @@
       <div class="bg-gray-50 px-4 sm:justify-between py-3 sm:flex sm:flex-row-reverse sm:px-6">
         <my-button 
             @click="CreatePost"
-            style="margin-left: 15px"
             >Создать
+        </my-button>
+        <my-button 
+            @click="$emit('remove', false)"
+            >Отменить
         </my-button>
       </div>
 </template>
 
 
 <script>
+
 export default {
+    props: {
+        show: {
+            type: Boolean,
+            default: false 
+        }
+    },
     data() {
         return {
             post: {
@@ -45,7 +55,7 @@ export default {
                 title: '',
                 body: ''
             }
-        },
+        }
     }
 }
 </script>

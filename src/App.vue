@@ -29,6 +29,7 @@
             <my-dialog v-model:show="dialogVisible">
                 <PostForm 
                     @create="CreatePost"
+                    @remove="removeDialog"
                 />
             </my-dialog>
             <!-- Посты -->
@@ -79,6 +80,9 @@ export default {
         CreatePost(post) {
             this.posts.push(post)
             this.dialogVisible = false 
+        },
+        removeDialog() {
+            this.dialogVisible = false
         },
         removePost(post) {
             this.posts = this.posts.filter(p => p.id !== post.id)
