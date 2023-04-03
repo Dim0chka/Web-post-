@@ -59,7 +59,6 @@
 
 <script>
 export default {
-    name: "my-button-page"
 }
 </script>
 
