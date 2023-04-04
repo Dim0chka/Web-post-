@@ -40,8 +40,16 @@
             />
             <!-- лоудер загрузки постов  -->
             <my-loader v-else></my-loader>
-            <!-- кнопки переключения на другие станицы -->
-            <PageButton :page="page" :limit="limit" :totalPages="totalPages"></PageButton>
+            <!-- кнопки переключения на другие страницы -->
+            <PageButton 
+                :page="page" 
+                :totalPages="totalPages" 
+                :countPosts="countPosts"
+                @changePage="ChangePage"
+                @prevPage="PrevPage"
+                @nextPage="NextPage"
+                >
+            </PageButton>
         </div>
     </div>
 </template>
@@ -67,6 +75,7 @@ export default {
             page: 1,
             limit: 10,
             totalPages: 0,
+            countPosts: 0,
             sortOptions: [
                 {value: 'title', name: 'По названию постов'},
                 {value: 'body', name: 'По содержанию постов'},
@@ -90,10 +99,23 @@ export default {
         showDialog() {
             this.dialogVisible = true 
         },
-        changePage(pageN) {
+        ChangePage(pageN) {
             this.page = pageN
         },
-
+        PrevPage(page) {
+            if (page === 1) {
+                this.page = this.totalPages 
+            } else {
+                this.page = page - 1
+            }
+        },
+        NextPage(page) {
+            if (page === this.totalPages) {
+                this.page = 1 
+            } else {
+                this.page = page + 1
+            }
+        },
         async fetchPosts() {
             try {
                 this.isPostsLoading = true 
@@ -103,6 +125,7 @@ export default {
                         _limit: this.limit
                     }
                 })
+                this.countPosts = response.headers['x-total-count']
                 this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
                 this.posts = response.data
             } catch(e) {
@@ -163,10 +186,6 @@ export default {
 .page {
     border: 1px solid black;
     padding: 10px;
-}
-
-.current-page {
-    border: 2px solid goldenrod
 }
 
 </style>
