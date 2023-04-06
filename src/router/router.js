@@ -18,5 +18,4 @@ const router = createRouter({
     history: createWebHashHistory(process.env.BASE_URL)
 })
 
-
 export default router 
