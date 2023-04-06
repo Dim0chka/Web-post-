@@ -40,8 +40,9 @@
             />
             <!-- лоудер загрузки постов  -->
             <my-loader v-else></my-loader>
+            <div ref="observer" class="lines"></div>
             <!-- кнопки переключения на другие страницы -->
-            <PageButton 
+            <!-- <PageButton 
                 :page="page" 
                 :totalPages="totalPages" 
                 :countPosts="countPosts"
@@ -49,7 +50,7 @@
                 @prevPage="PrevPage"
                 @nextPage="NextPage"
                 >
-            </PageButton>
+            </PageButton> -->
         </div>
     </div>
 </template>
@@ -99,23 +100,23 @@ export default {
         showDialog() {
             this.dialogVisible = true 
         },
-        ChangePage(pageN) {
-            this.page = pageN
-        },
-        PrevPage(page) {
-            if (page === 1) {
-                this.page = this.totalPages 
-            } else {
-                this.page = page - 1
-            }
-        },
-        NextPage(page) {
-            if (page === this.totalPages) {
-                this.page = 1 
-            } else {
-                this.page = page + 1
-            }
-        },
+        // ChangePage(pageN) {
+        //     this.page = pageN
+        // },
+        // PrevPage(page) {
+        //     if (page === 1) {
+        //         this.page = this.totalPages 
+        //     } else {
+        //         this.page = page - 1
+        //     }
+        // },
+        // NextPage(page) {
+        //     if (page === this.totalPages) {
+        //         this.page = 1 
+        //     } else {
+        //         this.page = page + 1
+        //     }
+        // },
         async fetchPosts() {
             try {
                 this.isPostsLoading = true 
@@ -133,10 +134,42 @@ export default {
             } finally {
                 this.isPostsLoading = false     
             }
-        }
+        },
+        async loadMorePost() {
+            try {
+                this.page += 1 
+                const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+                    params: {
+                        _page: this.page,
+                        _limit: this.limit
+                    }
+                })
+                this.countPosts = response.headers['x-total-count']
+                this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
+                this.posts = [...this.posts, ...response.data]
+            } catch(e) {
+                alert(e)
+            } 
+        } 
     },
     mounted() {
         this.fetchPosts() 
+        console.log(this.$refs.observer)
+
+        const options = {
+            rootMargin: "0px",
+            threshold: 1.0,
+        } 
+
+        const callback = (entries, observer) => {
+            console.log(entries)
+            if (entries[0].isIntersecting) {
+                this.loadMorePost()
+            }
+        }       
+
+        const observer = new IntersectionObserver(callback, options)
+        observer.observe(this.$refs.observer)
     },
     computed: {
         sortedPost() {
@@ -154,9 +187,9 @@ export default {
         }
     },
     watch: {
-        page() {
-            this.fetchPosts()
-        }
+        // page() {
+        //     this.fetchPosts()
+        // }
     }
 }
 </script>
@@ -186,6 +219,12 @@ export default {
 .page {
     border: 1px solid black;
     padding: 10px;
+}
+
+.lines {
+    background: green;
+    height: 30px;
+    width: 100%;
 }
 
 </style>
